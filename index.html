@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123b32">
+<meta name="description" content="Entrenamiento práctico de 21 días para cultivar tranquilidad y flexibilidad.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>21 días de tranquilidad</title>
+<style>
+:root{--green:#123b32;--mint:#e8f1ec;--ink:#20312c;--muted:#687a73;--paper:#f5f7f5;--line:#dce5df}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--green);color:white;padding:28px 20px 34px;border-radius:0 0 26px 26px}
+header small{opacity:.8;letter-spacing:.08em;text-transform:uppercase}h1{font-size:28px;line-height:1.15;margin:10px 0}header p{margin:0;opacity:.9}
+main{max-width:720px;margin:-15px auto 40px;padding:0 16px}
+.card{background:white;border:1px solid var(--line);border-radius:20px;padding:19px;margin:14px 0;box-shadow:0 5px 18px #19392b0a}
+.progress{height:9px;background:#e8eee9;border-radius:20px;overflow:hidden;margin:12px 0}.bar{height:100%;width:0;background:#3b8067;transition:width .2s}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.muted{color:var(--muted);font-size:14px}
+h2{font-size:20px;margin:0 0 10px}h3{font-size:16px;margin:16px 0 7px}
+label.task{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--green);flex:0 0 auto;margin-top:2px}
+textarea{width:100%;min-height:88px;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;resize:vertical}
+button{border:0;border-radius:12px;padding:12px 16px;background:var(--green);color:white;font:600 15px system-ui;cursor:pointer}
+button.secondary{background:var(--mint);color:var(--green)}button:disabled{opacity:.4}
+.phrase{background:var(--mint);padding:14px;border-radius:13px;font-weight:600}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
+</style>
+</head>
+<body>
+<header><small>Tu entrenamiento personal</small><h1>21 días de tranquilidad</h1><p>Pequeños ejercicios para esperar con más calma, soltar el control y disfrutar más.</p></header>
+<main>
+<section class="card">
+ <div class="row"><strong id="dayLabel">Día 1 de 21</strong><strong id="percent">0%</strong></div>
+ <div class="progress"><div class="bar" id="bar"></div></div>
+ <div class="row"><span class="muted" id="doneLabel">0 de 5 prácticas completadas hoy</span><span class="muted" id="streak">Progreso: 0/21 días</span></div>
+</section>
+<section class="card">
+ <div class="row"><h2 id="title">Día 1 · Practicar la espera</h2><span class="muted" id="dayCount">1/21</span></div>
+ <p id="goal">Objetivo: notar la impaciencia sin dejar que dirija tu reacción.</p>
+ <h3>Práctica de hoy (5–10 minutos)</h3>
+ <div id="tasks"></div>
+ <h3>Frase para recordar</h3><div class="phrase" id="phrase"></div>
+ <h3>Reflexión</h3><p class="muted" id="question"></p>
+ <textarea id="reflection" placeholder="Escribe aquí cómo te fue..."></textarea>
+ <div class="row" style="margin-top:14px"><button class="secondary" id="prev">Día anterior</button><button id="next">Siguiente día</button></div>
+</section>
+<section class="card">
+ <h2>Mi avance</h2><p class="muted">Marca las prácticas realizadas. Tu progreso se guarda en este dispositivo y navegador.</p>
+ <button class="secondary" id="reset">Reiniciar progreso</button>
+</section>
+<footer>Avanza a tu ritmo. Un día difícil no borra lo que ya has construido.</footer>
+</main>
+<script>
+const days = [
+["Practicar la espera","Entrenar la capacidad de esperar sin apresurar lo que no depende de ti.",["Haz 2 minutos de respiración cómoda: inhala 4 segundos y exhala 6, sin forzar.","Durante 3 minutos, espera en una situación cotidiana sin mirar constantemente la hora ni buscar acelerar el proceso.","Cuando aparezca la impaciencia, nómbrala: «Estoy sintiendo impaciencia» y vuelve a lo que tienes delante."],"No todo tiene que suceder a mi ritmo para que yo pueda estar tranquilo.","¿Estoy perdiendo algo importante o solo estoy incómodo porque las cosas no avanzan a mi ritmo?"],
+["Distinguir hechos de interpretaciones","Separar lo que ocurrió de lo que tu mente supone.",["Recuerda una situación reciente que te irritó.","Escribe el hecho observable en una frase, sin juicios.","Escribe qué interpretación hiciste y una explicación alternativa posible."],"Un pensamiento no es automáticamente un hecho.","¿Qué sabía con certeza y qué estaba suponiendo?"],
+["Soltar la urgencia","Comprobar que puedes hacer las cosas con calma aunque tengas ganas de acelerar.",["Elige una tarea sencilla y hazla deliberadamente a un ritmo tranquilo durante 5 minutos.","Nota las ganas de terminar rápido; no luches contra ellas.","Relaja mandíbula, hombros y manos."],"Puedo hacer las cosas bien sin hacerlas con afán.","¿Qué cambió cuando dejé de exigirme rapidez?"],
+["Aceptar otros ritmos","Practicar flexibilidad cuando otra persona hace algo de una manera distinta.",["Piensa en una diferencia pequeña de ritmo o método con alguien.","Repite: «Distinto no significa incorrecto».","En una situación cotidiana, permite que la otra persona termine a su manera, siempre que sea seguro y razonable."],"No necesito corregir cada diferencia.","¿Era realmente necesario que se hiciera a mi manera?"],
+["Cerrar el diálogo mental","Evitar que una molestia siga ocupando tu mente después de terminar.",["Anota en una frase qué te molestó.","Pregúntate si hay una acción útil pendiente. Si no la hay, di mentalmente: «Por hoy lo cierro».","Dedica 3 minutos a escuchar música o tocar guitarra con atención."],"Pensarlo otra vez no siempre lo resuelve.","¿Estoy buscando una solución o repitiendo el enojo?"],
+["Pedir información con calma","Expresar lo que necesitas sin acusar.",["Practica esta frase: «Si hay un cambio o retraso, avísame cuando puedas para organizarme».","Dila en voz alta con tono tranquilo.","Piensa en una ocasión apropiada para usarla, sin convertirla en reclamo."],"Puedo pedir claridad sin pelear.","¿Cómo puedo expresar mi necesidad de información con respeto?"],
+["Darme un margen","Crear un pequeño espacio entre el impulso y la respuesta.",["Cuando algo te irrite hoy, haz una pausa de 10 segundos.","Exhala lentamente y afloja los hombros.","Después decide si vale la pena responder o si puedes dejarlo pasar."],"Puedo elegir mi respuesta.","¿Qué habría pasado si respondía inmediatamente?"],
+["Aceptar cambios de plan","Practicar adaptación cuando algo no sale como esperabas.",["Imagina un plan sencillo que cambie a última hora.","Nombra lo que sí puedes controlar y lo que no.","Piensa en una alternativa viable sin buscar que sea perfecta."],"Un cambio de plan no arruina necesariamente el día.","¿Qué alternativa suficiente puedo aceptar?"],
+["Esperar sin vigilar","Reducir la atención constante al tiempo.",["Durante una espera de 3 a 5 minutos, guarda el teléfono si es posible.","Lleva la atención a cinco cosas que ves y tres sonidos que escuchas.","No conviertas el ejercicio en una competencia."],"Puedo estar presente mientras espero.","¿Qué noté cuando dejé de vigilar el tiempo?"],
+["Comunicar mi espacio","Pedir un momento a solas sin hacer sentir rechazados a los demás.",["Practica: «Estoy saturado, no es contigo. Necesito 15 minutos y después hablamos».","Piensa en cómo cumplirás la parte de volver a conversar.","Si hoy necesitas espacio, comunícalo con cariño y retoma el contacto."],"Pedir espacio también puede ser una forma de cuidar la relación.","¿Cómo puedo pedir silencio sin distanciarme emocionalmente?"],
+["Bajar la exigencia","Reconocer cuándo una expectativa es demasiado rígida.",["Identifica una expectativa pequeña que tengas hoy.","Pregúntate si es una necesidad o una preferencia.","Permite una versión suficientemente buena."],"Lo suficientemente bueno también sirve.","¿Qué expectativa puedo flexibilizar?"],
+["No personalizar los retrasos","Recordar que no todo retraso es falta de consideración.",["Piensa en dos razones posibles por las que alguien podría demorarse.","Evita decidir de inmediato cuál es la explicación.","Si necesitas saber, pregunta de forma directa y respetuosa."],"No conozco toda la historia detrás de una demora.","¿Qué otra explicación podría existir?"],
+["Disfrutar el trayecto","Mover la atención del resultado al momento presente.",["Haz una actividad cotidiana sin enfocarte solo en terminarla.","Observa el entorno, la música o las sensaciones.","Si aparece el apuro, vuelve con suavidad a la actividad."],"No todo momento es un obstáculo entre dos destinos.","¿Qué pude disfrutar mientras hacía algo cotidiano?"],
+["Elegir mis batallas","Reservar energía para lo que sí importa.",["Piensa en tres molestias recientes.","Clasifica cada una: importante, solucionable o pequeña.","Elige conscientemente no alimentar una molestia pequeña."],"Mi tranquilidad vale más que ganar cada discusión.","¿Qué puedo dejar pasar hoy?"],
+["Respirar antes de hablar","Cuidar el tono cuando estás frustrado.",["Haz cinco exhalaciones lentas.","Relaja frente, mandíbula y hombros.","Si debes hablar, empieza por describir el hecho y luego lo que necesitas."],"Puedo ser claro sin ser duro.","¿Mi forma de hablar ayuda a resolverlo?"],
+["Confiar en mi capacidad de adaptación","Recordar que no necesitas anticipar todas las posibilidades.",["Elige un plan pequeño y deja un detalle sin organizar de antemano.","Si cambia, busca una solución cuando ocurra.","Reconoce que puedes resolver imprevistos paso a paso."],"No tengo que preverlo todo para estar preparado.","¿Qué resolví sin haberlo planeado?"],
+["Soltar el control ajeno","Diferenciar tu responsabilidad de las decisiones de otros.",["Nombra algo que dependa de otra persona.","Identifica qué sí puedes decidir tú: esperar, preguntar, cambiar el plan o retirarte.","Acepta que no puedes controlar el ritmo ajeno."],"Puedo cuidar mis decisiones sin controlar las de los demás.","¿Qué parte de esta situación sí está en mis manos?"],
+["Volver a conectar","Evitar que el estrés se convierta en distancia prolongada.",["Si te notas frío o callado, explica brevemente qué te pasa.","Aclara que no es rechazo y di cuándo retomarás la conversación.","Cumple el acuerdo y comparte un gesto de cariño."],"Puedo necesitar espacio y seguir estando presente.","¿Qué señal de cercanía puedo ofrecer incluso cuando estoy saturado?"],
+["Revisar mis avances","Reconocer cambios pequeños y concretos.",["Recuerda una espera o cambio que manejaste mejor que antes.","Anota qué hiciste diferente.","Reconoce el esfuerzo, aunque no haya salido perfecto."],"El progreso también se mide en pausas pequeñas.","¿Qué reacción mía está empezando a cambiar?"],
+["Practicar la paciencia con alguien","Elegir una interacción para escuchar sin apresurar.",["En una conversación, deja terminar a la otra persona.","Evita completar sus frases o mirar constantemente la hora.","Resume mentalmente lo que quiso decir antes de responder."],"Escuchar también requiere paciencia.","¿Qué descubrí al no apresurar la conversación?"],
+["Mi plan para continuar","Convertir lo aprendido en una práctica realista.",["Elige las tres herramientas que más te ayudaron.","Escribe una frase que usarás cuando sientas impotencia por una espera.","Decide cómo repararás la conexión si te aíslas cuando estás saturado."],"No busco ser perfecto; busco responder cada vez mejor.","¿Qué hábito quiero mantener después de estos 21 días?"]
+];
+let current=Number(localStorage.getItem("day")||0), checks=JSON.parse(localStorage.getItem("checks")||"{}"), notes=JSON.parse(localStorage.getItem("notes")||"{}");
+const $=id=>document.getElementById(id);
+function render(){
+ const d=days[current], key=String(current), done=(checks[key]||[]).filter(Boolean).length;
+ $("dayLabel").textContent=`Día ${current+1} de 21`; $("dayCount").textContent=`${current+1}/21`;
+ $("title").textContent=`Día ${current+1} · ${d[0]}`; $("goal").textContent="Objetivo: "+d[1];
+ $("tasks").innerHTML="";
+ d[2].forEach((t,i)=>{const l=document.createElement("label");l.className="task";const c=document.createElement("input");c.type="checkbox";c.checked=!!(checks[key]||[])[i];c.addEventListener("change",()=>{checks[key]=checks[key]||[];checks[key][i]=c.checked;save();render()});const s=document.createElement("span");s.textContent=t;l.append(c,s);$("tasks").append(l)});
+ $("phrase").textContent=d[3];$("question").textContent=d[4];$("reflection").value=notes[key]||"";
+ $("reflection").oninput=e=>{notes[key]=e.target.value;save()};
+ $("percent").textContent=Math.round(done/3*100)+"%";$("bar").style.width=(done/3*100)+"%";$("doneLabel").textContent=`${done} de 3 prácticas completadas hoy`;
+ const completed=Object.values(checks).filter(a=>a&&a.length>=3&&a.slice(0,3).every(Boolean)).length;
+ $("streak").textContent=`Progreso: ${completed}/21 días`;
+ $("prev").disabled=current===0;$("next").textContent=current===20?"Volver al inicio":"Siguiente día";
+}
+function save(){localStorage.setItem("day",current);localStorage.setItem("checks",JSON.stringify(checks));localStorage.setItem("notes",JSON.stringify(notes))}
+$("prev").onclick=()=>{current=Math.max(0,current-1);save();render()};$("next").onclick=()=>{current=current===20?0:current+1;save();render()};
+$("reset").onclick=()=>{if(confirm("¿Seguro que quieres borrar todo tu progreso?")){current=0;checks={};notes={};save();render()}};
+if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+render();
+</script>
+</body></html>
